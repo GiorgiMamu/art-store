@@ -1,138 +1,69 @@
 <?php
-// dashboard.php
-// Logged-in users can add new products and manage their own listings
+require_once 'includes/session.php';
 
-session_start();
-
-// If not logged in, send to login page
 if (!isset($_SESSION['user_id'])) {
     header('Location: /art-store/auth.php');
     exit;
 }
-
-// Admins should use the admin panel
 if ($_SESSION['user_role'] === 'admin') {
     header('Location: /art-store/admin.php');
     exit;
 }
 
-require_once 'includes/db.php';
+require_once 'includes/classes.php';
 
-$error   = '';
-$success = '';
+$productManager = new ProductManager($pdo);
+$fileManager    = new FileManager();
+$error          = '';
+$success        = '';
 
-// -----------------------------------------------
-// Handle form submissions
-// -----------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
-    // ADD PRODUCT
     if ($action === 'add') {
         $title       = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $price       = floatval($_POST['price'] ?? 0);
-        $cats        = $_POST['categories'] ?? []; // array of selected category IDs
+        $cats        = $_POST['categories'] ?? [];
         $imageName   = null;
 
         if (empty($title) || $price <= 0) {
             $error = 'Title and a valid price are required.';
         } else {
-
-            // Handle image upload if a file was chosen
             if (!empty($_FILES['image']['name'])) {
-
-                $file      = $_FILES['image'];
-                $allowed   = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-
-                // finfo checks the actual file type, not just the extension
-                $finfo    = finfo_open(FILEINFO_MIME_TYPE);
-                $mimeType = finfo_file($finfo, $file['tmp_name']);
-                finfo_close($finfo);
-
-                if (!in_array($mimeType, $allowed)) {
-                    $error = 'Only JPG, PNG, GIF or WEBP images are allowed.';
-                } elseif ($file['size'] > 3 * 1024 * 1024) {
-                    // 3MB limit
-                    $error = 'Image must be under 3MB.';
+                $result = $fileManager->uploadImage($_FILES['image']);
+                // If result starts with 'img_' it's a filename, otherwise it's an error
+                if (strpos($result, 'img_') === 0) {
+                    $imageName = $result;
                 } else {
-                    // Create a unique filename so files never overwrite each other
-                    $ext       = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $imageName = uniqid('img_') . '.' . strtolower($ext);
-                    $dest      = 'uploads/' . $imageName;
-
-                    // move_uploaded_file() moves the file from temp location to our folder
-                    if (!move_uploaded_file($file['tmp_name'], $dest)) {
-                        $error     = 'Could not save image. Check that the uploads folder exists.';
-                        $imageName = null;
-                    }
+                    $error = $result;
                 }
             }
 
             if (!$error) {
-                // Insert product into database
-                $stmt = $pdo->prepare("
-                    INSERT INTO products (title, description, price, image, user_id)
-                    VALUES (?, ?, ?, ?, ?)
-                ");
-                $stmt->execute([$title, $description, $price, $imageName, $_SESSION['user_id']]);
-
-                // Get the ID of the product we just inserted
-                $productId = $pdo->lastInsertId();
-
-                // Link the product to its selected categories
-                // This fills the product_categories table (the N:N junction table)
-                foreach ($cats as $catId) {
-                    $stmt2 = $pdo->prepare("
-                        INSERT INTO product_categories (product_id, category_id) VALUES (?, ?)
-                    ");
-                    $stmt2->execute([$productId, intval($catId)]);
-                }
-
+                $productManager->create($title, $description, $price, $imageName, $_SESSION['user_id'], $cats);
                 $success = 'Product added successfully!';
             }
         }
     }
 
-    // DELETE PRODUCT
     if ($action === 'delete') {
         $productId = intval($_POST['product_id']);
-
-        // Make sure this product actually belongs to the logged-in user
-        // We never trust that the user is who they say — we check the database
-        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ? AND user_id = ?");
-        $stmt->execute([$productId, $_SESSION['user_id']]);
-        $product = $stmt->fetch();
-
-        if ($product) {
-            // Delete the image file if one exists
-            if ($product['image'] && file_exists('uploads/' . $product['image'])) {
-                unlink('uploads/' . $product['image']); // unlink() deletes a file
-            }
-            // Delete from database (product_categories rows are deleted automatically
-            // because we set ON DELETE CASCADE in the database)
-            $stmt2 = $pdo->prepare("DELETE FROM products WHERE id = ?");
-            $stmt2->execute([$productId]);
+        // Verify ownership before deleting
+        $product = $productManager->getById($productId);
+        if ($product && $product['user_id'] == $_SESSION['user_id']) {
+            $productManager->delete($productId);
             $success = 'Product deleted.';
         } else {
-            $error = 'Product not found or you do not have permission.';
+            $error = 'Product not found or permission denied.';
         }
     }
 }
 
-// Get all products belonging to this user
-$stmt = $pdo->prepare("
-    SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC
-");
-$stmt->execute([$_SESSION['user_id']]);
-$myProducts = $stmt->fetchAll();
+$myProducts = $productManager->getByUser($_SESSION['user_id']);
+$categories = $productManager->getCategories();
+$pageTitle  = 'Dashboard - ArtStore';
 
-// Get all categories for the checkboxes
-$stmt = $pdo->prepare("SELECT * FROM categories ORDER BY name");
-$stmt->execute();
-$categories = $stmt->fetchAll();
-
-$pageTitle = 'Dashboard - ArtStore';
 require_once 'includes/header.php';
 ?>
 

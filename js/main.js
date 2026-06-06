@@ -1,18 +1,11 @@
 // main.js
 // All JavaScript for ArtStore.
-// jQuery is loaded in header.php before this file runs.
 
 // $(document).ready means: wait until the HTML page is fully loaded, then run this code.
-// This is the standard way to start jQuery code.
 $(document).ready(function () {
-
-    // =====================================================
-    // 1. MOBILE NAVIGATION - the required jQuery fragment
-    //
     // When the hamburger button is clicked,
     // add or remove the "open" class on the nav links.
     // The CSS shows the nav when it has the class "open".
-    // =====================================================
     $('#burgerBtn').on('click', function () {
         // toggleClass adds the class if missing, removes it if present
         $('#navLinks').toggleClass('open');
@@ -27,12 +20,9 @@ $(document).ready(function () {
     });
 
 
-    // =====================================================
-    // 2. AUTH PAGE TABS
-    //
+   
     // When Login or Register tab is clicked,
     // show that form and hide the other one.
-    // =====================================================
     $('.auth-tab').on('click', function () {
         var target = $(this).data('target'); // e.g. "loginForm"
 
@@ -47,19 +37,7 @@ $(document).ready(function () {
     });
 
 
-    // =====================================================
-    // 3. ADMIN NOTE FORM (show/hide)
-    //
-    // These functions are called from onclick= in admin.php
-    // =====================================================
-    // (see showNoteForm and hideNoteForm below - outside ready)
-
-
-    // =====================================================
-    // 4. AUTO HIDE ALERTS after 4 seconds
-    //
     // Alerts (success/error messages) disappear automatically
-    // =====================================================
     if ($('.alert').length > 0) {
         // .delay() waits, then .slideUp() animates hiding
         $('.alert').delay(4000).slideUp(500);
@@ -68,10 +46,8 @@ $(document).ready(function () {
 });
 
 
-// =====================================================
 // These functions are outside $(document).ready
 // because they are called directly from HTML onclick=""
-// =====================================================
 
 // Shows the write-note form and fills in the user's info
 function showNoteForm(userId, userName) {

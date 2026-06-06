@@ -1,53 +1,26 @@
 <?php
-// product.php
-// Shows one product's full details
-// The product ID comes from the URL: product.php?id=5
+require_once 'includes/session.php';
+require_once 'includes/classes.php';
 
-session_start();
-require_once 'includes/db.php';
-
-// Get the id from the URL
-// FILTER_VALIDATE_INT makes sure it's actually a number
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-// If no valid id, send user back to products page
 if (!$id) {
     header('Location: /art-store/products.php');
     exit;
 }
 
-// Get this product from the database
-// We also get the seller's name by joining the users table
-$stmt = $pdo->prepare("
-    SELECT products.*, users.name AS seller_name
-    FROM products
-    JOIN users ON products.user_id = users.id
-    WHERE products.id = ?
-");
-$stmt->execute([$id]);
-$product = $stmt->fetch();
+$productManager = new ProductManager($pdo);
+$product        = $productManager->getById($id);
 
-// If product not found, go back to products page
 if (!$product) {
     header('Location: /art-store/products.php');
     exit;
 }
 
-// Get the categories this product belongs to
-$stmt2 = $pdo->prepare("
-    SELECT categories.name
-    FROM categories
-    JOIN product_categories ON categories.id = product_categories.category_id
-    WHERE product_categories.product_id = ?
-");
-$stmt2->execute([$id]);
-$categories = $stmt2->fetchAll();
-
-$pageTitle = htmlspecialchars($product['title']) . ' - ArtStore';
+$categories = $productManager->getCategoriesForProduct($id);
+$pageTitle  = htmlspecialchars($product['title']) . ' - ArtStore';
 
 require_once 'includes/header.php';
 ?>
-
 <section class="section">
     <div class="container">
 

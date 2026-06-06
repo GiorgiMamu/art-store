@@ -1,44 +1,16 @@
 <?php
-// products.php
-// Shows all products with a search form at the top
+require_once 'includes/session.php';
+require_once 'includes/classes.php';
 
-session_start();
-require_once 'includes/db.php';
-
-$pageTitle = 'Products - ArtStore';
-
-// Check if user typed something in the search box
-// $_GET['search'] comes from the URL e.g. products.php?search=brush
-// We use trim() to remove extra spaces
-// We use htmlspecialchars() to prevent security issues
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$pageTitle      = 'Products - ArtStore';
+$productManager = new ProductManager($pdo);
+$search         = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 if ($search !== '') {
-    // If search is not empty, find products whose title contains the search word
-    // The % symbols mean "anything before or after"
-    // The :search is a placeholder - PDO will safely insert the value
-    $stmt = $pdo->prepare("
-        SELECT products.*, users.name AS seller_name
-        FROM products
-        JOIN users ON products.user_id = users.id
-        WHERE products.status = 'active'
-        AND products.title LIKE :search
-        ORDER BY products.created_at DESC
-    ");
-    $stmt->execute([':search' => '%' . $search . '%']);
+    $products = $productManager->search($search);
 } else {
-    // If no search, just get all active products
-    $stmt = $pdo->prepare("
-        SELECT products.*, users.name AS seller_name
-        FROM products
-        JOIN users ON products.user_id = users.id
-        WHERE products.status = 'active'
-        ORDER BY products.created_at DESC
-    ");
-    $stmt->execute();
+    $products = $productManager->getAll('active');
 }
-
-$products = $stmt->fetchAll();
 
 require_once 'includes/header.php';
 ?>

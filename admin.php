@@ -1,129 +1,64 @@
 <?php
-// admin.php
-// Only admins can access this page
-// Admins can manage all users and all products
+require_once 'includes/session.php';
 
-session_start();
-
-// Block everyone who is not an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: /art-store/index.php');
     exit;
 }
 
-require_once 'includes/db.php';
+require_once 'includes/classes.php';
 
-$error   = '';
-$success = '';
+$userManager    = new UserManager($pdo);
+$productManager = new ProductManager($pdo);
+$fileManager    = new FileManager();
+$error          = '';
+$success        = '';
 
-// -----------------------------------------------
-// Handle admin actions
-// -----------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
-    // Change a user's role
     if ($action === 'update_role') {
-        $userId  = intval($_POST['user_id']);
-        $newRole = $_POST['new_role'] ?? '';
-        $allowed = ['admin', 'moderator', 'user'];
-
-        if (in_array($newRole, $allowed)) {
-            $stmt = $pdo->prepare("UPDATE users SET role = ? WHERE id = ?");
-            $stmt->execute([$newRole, $userId]);
-            $success = 'Role updated.';
-        }
+        $result  = $userManager->updateRole(intval($_POST['user_id']), $_POST['new_role'] ?? '');
+        $success = $result ? 'Role updated.' : 'Failed to update role.';
     }
 
-    // Delete a user
     if ($action === 'delete_user') {
         $userId = intval($_POST['user_id']);
-
-        // Do not let admin delete their own account
         if ($userId === intval($_SESSION['user_id'])) {
             $error = 'You cannot delete your own account.';
         } else {
-            $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-            $stmt->execute([$userId]);
+            $userManager->delete($userId);
             $success = 'User deleted.';
         }
     }
 
-    // Change a product's status
     if ($action === 'update_product_status') {
-        $productId = intval($_POST['product_id']);
-        $newStatus = $_POST['new_status'] ?? 'active';
-
-        if (in_array($newStatus, ['active', 'inactive'])) {
-            $stmt = $pdo->prepare("UPDATE products SET status = ? WHERE id = ?");
-            $stmt->execute([$newStatus, $productId]);
-            $success = 'Product status updated.';
-        }
+        $productManager->updateStatus(intval($_POST['product_id']), $_POST['new_status'] ?? 'active');
+        $success = 'Product status updated.';
     }
 
-    // Delete a product
     if ($action === 'delete_product') {
-        $productId = intval($_POST['product_id']);
-
-        // Get the product first so we can delete its image file
-        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-        $stmt->execute([$productId]);
-        $product = $stmt->fetch();
-
-        if ($product) {
-            if ($product['image'] && file_exists('uploads/' . $product['image'])) {
-                unlink('uploads/' . $product['image']);
-            }
-            $stmt2 = $pdo->prepare("DELETE FROM products WHERE id = ?");
-            $stmt2->execute([$productId]);
-            $success = 'Product deleted.';
-        }
+        $productManager->delete(intval($_POST['product_id']));
+        $success = 'Product deleted.';
     }
 
-    // Write a note about a user to a text file
     if ($action === 'write_note') {
-        $targetId = intval($_POST['target_user_id']);
-        $noteText = trim($_POST['note_text'] ?? '');
-
-        // Get the target user's name
-        $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
-        $stmt->execute([$targetId]);
-        $targetUser = $stmt->fetch();
-
+        $targetUser = $userManager->getById(intval($_POST['target_user_id']));
+        $noteText   = trim($_POST['note_text'] ?? '');
         if ($targetUser && !empty($noteText)) {
-            $timestamp = date('Y-m-d H:i:s');
-            $line = "[$timestamp] Admin '{$_SESSION['user_name']}' about '{$targetUser['name']}': $noteText\n";
-
-            // FILE_APPEND adds to the end of the file instead of overwriting it
-            file_put_contents('logs/user_notes.txt', $line, FILE_APPEND | LOCK_EX);
+            $fileManager->writeNote($_SESSION['user_name'], $targetUser['name'], $noteText);
             $success = 'Note saved.';
+        } else {
+            $error = 'Note cannot be empty.';
         }
     }
 }
 
-// Load all users
-$stmt = $pdo->prepare("SELECT * FROM users ORDER BY created_at DESC");
-$stmt->execute();
-$allUsers = $stmt->fetchAll();
+$allUsers    = $userManager->getAll();
+$allProducts = $productManager->getAllForAdmin();
+$notes       = $fileManager->readNotes();
+$pageTitle   = 'Admin Panel - ArtStore';
 
-// Load all products with seller name
-$stmt = $pdo->prepare("
-    SELECT products.*, users.name AS seller_name
-    FROM products
-    JOIN users ON products.user_id = users.id
-    ORDER BY products.created_at DESC
-");
-$stmt->execute();
-$allProducts = $stmt->fetchAll();
-
-// Read existing notes from the file
-$notes = [];
-if (file_exists('logs/user_notes.txt')) {
-    // file() reads a file into an array of lines
-    $notes = array_reverse(file('logs/user_notes.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
-}
-
-$pageTitle = 'Admin Panel - ArtStore';
 require_once 'includes/header.php';
 ?>
 

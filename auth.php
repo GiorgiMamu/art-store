@@ -22,9 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // A hidden field in each form tells us which form was submitted
     $action = $_POST['action'] ?? '';
 
-    // -----------------------------------------------
     // REGISTER
-    // -----------------------------------------------
     if ($action === 'register') {
         $name     = trim($_POST['name'] ?? '');
         $email    = trim($_POST['email'] ?? '');
@@ -61,9 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // -----------------------------------------------
     // LOGIN
-    // -----------------------------------------------
     if ($action === 'login') {
         $email      = trim($_POST['email'] ?? '');
         $password   = $_POST['password'] ?? '';
@@ -93,7 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare("UPDATE users SET remember_token = ? WHERE id = ?");
                     $stmt->execute([$token, $user['id']]);
                     // setcookie(name, value, expiry, path)
-                    setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/');
+                    setcookie('remember_token', $token, [
+                        'expires'  => time() + (30 * 24 * 60 * 60),
+                        'path'     => '/',
+                        'httponly' => true,
+                        'samesite' => 'Strict'
+                    ]);              
                 }
 
                 // Send admin to admin panel, others to dashboard

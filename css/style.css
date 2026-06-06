@@ -1,31 +1,10 @@
-/* =====================================================
-   style.css - Main Stylesheet for ArtStore
-   All page styles live here. No inline styles anywhere.
-
-   Colors used (showing HEX, RGBA and HSL as required):
-   - Primary blue:   #2d6be4  (HEX)
-   - Primary dark:   #1a4fb5  (HEX)
-   - Green success:  hsl(145, 60%, 40%)  (HSL)
-   - Red danger:     hsl(0, 70%, 55%)    (HSL)
-   - Shadow color:   rgba(0, 0, 0, 0.12) (RGBA)
-   - Card overlay:   rgba(0, 0, 0, 0.45) (RGBA)
-   - Light bg:       hsl(210, 20%, 97%)  (HSL)
-===================================================== */
-
-
-/* -------------------------------------------------------
-   RESET
-   Remove default browser spacing so we start clean
-------------------------------------------------------- */
 * {
     margin: 0;
     padding: 0;
-    /* box-sizing means padding and border are included in the element width */
     box-sizing: border-box;
 }
 
 html {
-    /* smooth scrolling when clicking # anchor links */
     scroll-behavior: smooth;
 }
 
@@ -34,9 +13,7 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: #333;
-    /* HSL color for the page background */
     background-color: hsl(210, 20%, 97%);
-    /* flex column so footer stays at the bottom */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -63,9 +40,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   LAYOUT HELPERS
-------------------------------------------------------- */
+/*LAYOUT HELPERS*/
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -105,9 +80,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   BUTTONS
-------------------------------------------------------- */
+/* BUTTONS */
 .btn {
     display: inline-block;
     padding: 10px 22px;
@@ -124,7 +97,6 @@ ul {
 .btn:hover {
     /* CSS3 transform - button lifts slightly on hover */
     transform: translateY(-2px);
-    /* CSS3 box-shadow using RGBA color */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -154,7 +126,6 @@ ul {
 }
 
 .btn-danger {
-    /* HSL color for red */
     background-color: hsl(0, 70%, 55%);
     color: #fff;
 }
@@ -175,14 +146,11 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   NAVBAR
-------------------------------------------------------- */
+/* NAVBAR*/
 .navbar {
     background-color: #1a1a2e;
-    /* CSS3 box-shadow using RGBA */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    position: sticky; /* stays visible when scrolling */
+    position: sticky; 
     top: 0;
     z-index: 999;
 }
@@ -201,7 +169,6 @@ ul {
     color: #fff;
     font-size: 1.3rem;
     font-weight: 700;
-    /* CSS3 transition */
     transition: color 0.2s ease;
 }
 
@@ -216,7 +183,7 @@ ul {
 }
 
 .nav-links a {
-    color: rgba(255, 255, 255, 0.85); /* RGBA for slight transparency */
+    color: rgba(255, 255, 255, 0.85); 
     padding: 6px 14px;
     border-radius: 5px;
     font-size: 0.93rem;
@@ -225,12 +192,12 @@ ul {
 }
 
 .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.12); /* RGBA hover background */
+    background-color: rgba(255, 255, 255, 0.12); 
     color: #fff;
 }
 
 .nav-greeting {
-    color: rgba(255, 255, 255, 0.5); /* RGBA muted text */
+    color: rgba(255, 255, 255, 0.5); 
     font-size: 0.85rem;
     padding: 0 8px;
 }
@@ -247,11 +214,8 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   HERO SECTION
-------------------------------------------------------- */
+/* HERO SECTION */
 .hero {
-    /* CSS3 gradient background */
     background: linear-gradient(135deg, #1a1a2e 0%, #2d6be4 100%);
     color: #fff;
     padding: 90px 20px;
@@ -270,18 +234,14 @@ ul {
 
 .hero-text p {
     font-size: 1.15rem;
-    /* RGBA for semi-transparent white */
     color: rgba(255, 255, 255, 0.85);
     margin-bottom: 28px;
     animation: slideDown 0.7s ease 0.1s both; /* 0.1s delay */
 }
 
 
-/* -------------------------------------------------------
-   PRODUCT GRID & CARDS
-------------------------------------------------------- */
+/* PRODUCT GRID & CARDS */
 .products-grid {
-    /* CSS Grid - responsive columns, no tables */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 24px;
@@ -291,16 +251,13 @@ ul {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    /* CSS3 box-shadow using RGBA */
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    /* CSS3 transition for hover effect */
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     display: flex;
     flex-direction: column;
 }
 
 .product-card:hover {
-    /* CSS3 transform - card lifts on hover */
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
@@ -309,12 +266,10 @@ ul {
     width: 100%;
     height: 190px;
     object-fit: cover; /* fills the box without stretching */
-    /* CSS3 transition for zoom effect */
     transition: transform 0.4s ease;
 }
 
 .product-card:hover .product-card-img {
-    /* CSS3 transform - image zooms in slightly on card hover */
     transform: scale(1.05);
 }
 
@@ -324,7 +279,6 @@ ul {
     align-items: center;
     justify-content: center;
     font-size: 3rem;
-    /* CSS3 gradient placeholder background */
     background: linear-gradient(135deg, #e8eaf6, #c5cae9);
 }
 
@@ -353,9 +307,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   PRODUCT DETAIL PAGE
-------------------------------------------------------- */
+/* PRODUCT DETAIL PAGE */
 .product-detail {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -366,7 +318,6 @@ ul {
 .product-detail-img {
     width: 100%;
     border-radius: 10px;
-    /* CSS3 box-shadow */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
 }
 
@@ -432,9 +383,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   SEARCH FORM
-------------------------------------------------------- */
+/* SEARCH FORM */
 .search-form {
     display: flex;
     gap: 10px;
@@ -449,14 +398,12 @@ ul {
     border: 2px solid #ddd;
     border-radius: 6px;
     font-size: 0.95rem;
-    /* CSS3 transition on focus */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-form input:focus {
     outline: none;
     border-color: #2d6be4;
-    /* CSS3 box-shadow focus ring using RGBA */
     box-shadow: 0 0 0 3px rgba(45, 107, 228, 0.2);
 }
 
@@ -467,18 +414,14 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   AUTH PAGE (Login / Register)
-------------------------------------------------------- */
+/* AUTH PAGE (Login / Register) */
 .auth-box {
     max-width: 440px;
     margin: 0 auto;
     background: #fff;
     border-radius: 10px;
     padding: 36px;
-    /* CSS3 box-shadow */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    /* CSS3 animation */
     animation: slideUp 0.5s ease;
 }
 
@@ -499,7 +442,6 @@ ul {
     font-weight: 600;
     cursor: pointer;
     color: #888;
-    /* CSS3 transition */
     transition: color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -514,9 +456,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   FORMS (shared styles)
-------------------------------------------------------- */
+/* FORMS (shared styles)*/
 .form-group {
     margin-bottom: 18px;
 }
@@ -542,7 +482,6 @@ ul {
     border-radius: 6px;
     font-size: 0.95rem;
     font-family: inherit;
-    /* CSS3 transition */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     background: #fff;
 }
@@ -552,7 +491,6 @@ ul {
 .form-group select:focus {
     outline: none;
     border-color: #2d6be4;
-    /* CSS3 box-shadow using RGBA */
     box-shadow: 0 0 0 3px rgba(45, 107, 228, 0.18);
 }
 
@@ -600,7 +538,6 @@ ul {
     cursor: pointer;
     font-weight: normal;
     font-size: 0.9rem;
-    /* CSS3 transition */
     transition: background-color 0.15s ease;
 }
 
@@ -609,15 +546,12 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   ALERTS
-------------------------------------------------------- */
+/*ALERTS */
 .alert {
     padding: 12px 18px;
     border-radius: 6px;
     margin-bottom: 20px;
     font-weight: 500;
-    /* CSS3 animation */
     animation: slideDown 0.3s ease;
 }
 
@@ -628,16 +562,13 @@ ul {
 }
 
 .alert-success {
-    /* HSL color */
     background-color: hsl(145, 60%, 94%);
     border-left: 4px solid hsl(145, 60%, 40%);
     color: hsl(145, 60%, 28%);
 }
 
 
-/* -------------------------------------------------------
-   DASHBOARD
-------------------------------------------------------- */
+/* DASHBOARD */
 .dashboard-header {
     margin-bottom: 30px;
     padding-bottom: 20px;
@@ -655,7 +586,6 @@ ul {
     background: #fff;
     border-radius: 10px;
     padding: 28px;
-    /* CSS3 box-shadow using RGBA */
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
     margin-bottom: 24px;
 }
@@ -678,7 +608,6 @@ ul {
     margin-bottom: 10px;
     gap: 10px;
     flex-wrap: wrap;
-    /* CSS3 transition */
     transition: background-color 0.15s ease;
 }
 
@@ -718,9 +647,7 @@ ul {
 .status-inactive { background: hsl(0, 80%, 92%);   color: hsl(0, 70%, 40%); }
 
 
-/* -------------------------------------------------------
-   ADMIN PANEL
-------------------------------------------------------- */
+/*  ADMIN PANEL*/
 .table-scroll {
     overflow-x: auto; /* horizontal scroll on small screens */
 }
@@ -746,7 +673,6 @@ ul {
 }
 
 .admin-table tr {
-    /* CSS3 transition */
     transition: background-color 0.15s ease;
 }
 
@@ -779,12 +705,9 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   FOOTER
-------------------------------------------------------- */
+/* FOOTER*/
 .site-footer {
     background: #1a1a2e;
-    /* RGBA for footer text */
     color: rgba(255, 255, 255, 0.65);
     padding: 28px 20px;
     text-align: center;
@@ -807,7 +730,6 @@ ul {
 
 .site-footer a {
     color: rgba(255, 255, 255, 0.65);
-    /* CSS3 transition */
     transition: color 0.2s ease;
 }
 
@@ -816,9 +738,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   CSS3 ANIMATIONS
-------------------------------------------------------- */
+/* CSS3 ANIMATIONS */
 
 /* Fades the element in */
 @keyframes fadeIn {
@@ -851,10 +771,7 @@ ul {
 }
 
 
-/* -------------------------------------------------------
-   RESPONSIVE - makes the site work on phones and tablets
-   These rules only apply below certain screen widths
-------------------------------------------------------- */
+
 
 /* Tablet - screen width 768px or less */
 @media (max-width: 768px) {
@@ -876,7 +793,6 @@ ul {
         align-items: flex-start;
         padding: 16px 20px;
         gap: 4px;
-        /* CSS3 box-shadow */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -893,7 +809,6 @@ ul {
         font-size: 1.8rem;
     }
 
-    /* Single column on tablets */
     .product-detail {
         grid-template-columns: 1fr;
     }

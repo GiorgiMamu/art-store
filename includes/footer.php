@@ -4,7 +4,7 @@
 // Closes the tags opened in header.php
 ?>
 
-</main><!-- end .page-content -->
+</main>
 
 <footer class="site-footer">
     <div class="footer-inner">
@@ -17,8 +17,8 @@
     </div>
 </footer>
 
-<!-- Our JavaScript file -->
-<!-- Loaded at the bottom so the HTML is ready before JS runs -->
+
+<!-- js file loaded at the bottom so the HTML is ready before JS runs -->
 <script src="/art-store/js/main.js"></script>
 
 </body>

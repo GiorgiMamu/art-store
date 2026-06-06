@@ -7,17 +7,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- This makes the page work properly on phones -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- $pageTitle is set on each page before including this file -->
     <title><?php echo isset($pageTitle) ? $pageTitle : 'Art Store'; ?></title>
-
-    <!-- Our stylesheet -->
     <link rel="stylesheet" href="/art-store/css/style.css">
-
     <!-- jQuery loaded from the internet (CDN) -->
-    <!-- This must be loaded before our main.js -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
@@ -26,14 +19,8 @@
 <nav class="navbar">
     <div class="nav-inner">
 
-        <!-- Site logo / name -->
         <a href="/art-store/index.php" class="nav-logo">🎨 ArtStore</a>
-
-        <!-- Hamburger button - only shows on mobile -->
-        <!-- When clicked, jQuery will show/hide the nav links -->
         <button class="nav-burger" id="burgerBtn">&#9776;</button>
-
-        <!-- Nav links -->
         <ul class="nav-links" id="navLinks">
             <li><a href="/art-store/index.php">Home</a></li>
             <li><a href="/art-store/products.php">Products</a></li>
@@ -59,5 +46,4 @@
     </div>
 </nav>
 
-<!-- Every page's content goes after this -->
 <main class="page-content">

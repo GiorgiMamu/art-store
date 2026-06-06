@@ -1,28 +1,12 @@
 <?php
-// index.php
-// Homepage - shows a hero banner and some featured products
+require_once 'includes/session.php';
+require_once 'includes/classes.php';
 
-session_start();
-
-// Include the database connection
-require_once 'includes/db.php';
-
-$pageTitle = 'ArtStore - Home';
-
-// Get 4 newest active products to show as featured
-// prepare() creates a safe SQL query
-// execute() runs it
-// fetchAll() returns all matching rows as an array
-$stmt = $pdo->prepare("
-    SELECT products.*, users.name AS seller_name
-    FROM products
-    JOIN users ON products.user_id = users.id
-    WHERE products.status = 'active'
-    ORDER BY products.created_at DESC
-    LIMIT 4
-");
-$stmt->execute();
-$featured = $stmt->fetchAll();
+$pageTitle      = 'ArtStore - Home';
+$productManager = new ProductManager($pdo);
+$featured       = $productManager->getAll('active');
+// Limit to 4 manually 
+$featured       = array_slice($featured, 0, 4);
 
 require_once 'includes/header.php';
 ?>
